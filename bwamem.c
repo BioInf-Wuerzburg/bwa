@@ -874,9 +874,10 @@ void mem_aln2sam(const mem_opt_t *opt, const bntseq_t *bns, kstring_t *str, bseq
 	kputc('\t', str);
 
 	// print SEQ and QUAL
-	if (p->flag & 0x100) { // for secondary alignments, don't write SEQ and QUAL
+	/*if (p->flag & 0x100) { // for secondary alignments, don't write SEQ and QUAL
 		kputsn("*\t*", 3, str);
-	} else if (!p->is_rev) { // the forward strand
+		} else*/
+	if (!p->is_rev) { // the forward strand
 		int i, qb = 0, qe = s->l_seq;
 		if (p->n_cigar && which && !(opt->flag&MEM_F_SOFTCLIP) && !p->is_alt) { // have cigar && not the primary alignment && not softclip all
 			if ((p->cigar[0]&0xf) == 4 || (p->cigar[0]&0xf) == 3) qb += p->cigar[0]>>4;
