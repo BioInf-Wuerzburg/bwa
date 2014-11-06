@@ -821,7 +821,10 @@ void mem_aln2sam(const mem_opt_t *opt, const bntseq_t *bns, kstring_t *str, bseq
 	int i, l_name;
 	mem_aln_t ptmp = list[which], *p = &ptmp, mtmp, *m = 0; // make a copy of the alignment to convert
 
-	if (m_) mtmp = *m_, m = &mtmp;
+        if(p->rid < 0) // skip unmapped alignments
+          return;
+
+        if (m_) mtmp = *m_, m = &mtmp;
 	// set flag
 	p->flag |= m? 0x1 : 0; // is paired in sequencing
 	p->flag |= p->rid < 0? 0x4 : 0; // is mapped
@@ -832,11 +835,6 @@ void mem_aln2sam(const mem_opt_t *opt, const bntseq_t *bns, kstring_t *str, bseq
 		m->rid = p->rid, m->pos = p->pos, m->is_rev = p->is_rev, m->n_cigar = 0;
 	p->flag |= p->is_rev? 0x10 : 0; // is on the reverse strand
 	p->flag |= m && m->is_rev? 0x20 : 0; // is mate on the reverse strand
-
-	// skip unaligned reads from output
-	if (!(p->flag & 0x4)) {
-	  return;
-	}
 
 	// print up to CIGAR
 	l_name = strlen(s->name);
