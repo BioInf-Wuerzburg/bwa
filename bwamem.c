@@ -833,6 +833,11 @@ void mem_aln2sam(const mem_opt_t *opt, const bntseq_t *bns, kstring_t *str, bseq
 	p->flag |= p->is_rev? 0x10 : 0; // is on the reverse strand
 	p->flag |= m && m->is_rev? 0x20 : 0; // is mate on the reverse strand
 
+	// skip unaligned reads from output
+	if (!(p->flag & 0x4)) {
+	  return;
+	}
+
 	// print up to CIGAR
 	l_name = strlen(s->name);
 	ks_resize(str, str->l + s->l_seq + l_name + (s->qual? s->l_seq : 0) + 20);
