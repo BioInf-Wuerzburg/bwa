@@ -32,7 +32,7 @@ typedef struct {
 
 	uint64_t max_mem_intv;
 
-	int T;                  // output score threshold; only affecting output
+	float T;                  // output score threshold; only affecting output
 	int flag;               // see MEM_F_* macros
 	int min_seed_len;       // minimum seed length
 	int min_chain_weight;

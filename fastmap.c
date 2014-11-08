@@ -61,7 +61,8 @@ int main_mem(int argc, char *argv[])
 		else if (c == 'w') opt->w = atoi(optarg), opt0.w = 1;
 		else if (c == 'A') opt->a = atoi(optarg), opt0.a = 1;
 		else if (c == 'B') opt->b = atoi(optarg), opt0.b = 1;
-		else if (c == 'T') opt->T = atoi(optarg), opt0.T = 1;
+		//else if (c == 'T') opt->T = atoi(optarg), opt0.T = 1;
+		else if (c == 'T') opt->T = atof(optarg), opt0.T = 1.; // read float score
 		else if (c == 'U') opt->pen_unpaired = atoi(optarg), opt0.pen_unpaired = 1;
 		else if (c == 't') opt->n_threads = atoi(optarg), opt->n_threads = opt->n_threads > 1? opt->n_threads : 1;
 		else if (c == 'P') opt->flag |= MEM_F_NOPAIRING;
@@ -171,7 +172,7 @@ int main_mem(int argc, char *argv[])
 		fprintf(stderr, "       -j            ignore ALT contigs\n");
 		fprintf(stderr, "\n");
 		fprintf(stderr, "       -v INT        verbose level: 1=error, 2=warning, 3=message, 4+=debugging [%d]\n", bwa_verbose);
-		fprintf(stderr, "       -T INT        minimum score to output [%d]\n", opt->T);
+		fprintf(stderr, "       -T INT        !! PER BASE !! minimum score to output [%.2f], \n", opt->T);
 		fprintf(stderr, "       -h INT[,INT]  if there are <INT hits with score >80%% of the max score, output all in XA [%d,%d]\n", opt->max_XA_hits, opt->max_XA_hits_alt);
 		fprintf(stderr, "       -a            output all alignments for SE or unpaired PE\n");
 		fprintf(stderr, "       -C            append FASTA/FASTQ comment to SAM output\n");

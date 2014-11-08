@@ -54,7 +54,8 @@ mem_opt_t *mem_opt_init()
 	o->o_del = o->o_ins = 6;
 	o->e_del = o->e_ins = 1;
 	o->w = 100;
-	o->T = 30;
+	//o->T = 30;
+        o->T = 0.5; // per base score
 	o->zdrop = 100;
 	o->pen_unpaired = 17;
 	o->pen_clip5 = o->pen_clip3 = 5;
@@ -995,7 +996,7 @@ void mem_reg2sam(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, 
 	for (k = l = 0; k < a->n; ++k) {
 		mem_alnreg_t *p = &a->a[k];
 		mem_aln_t *q;
-		if (p->score < opt->T) continue;
+		if (p->score < opt->T * s->l_seq) continue;
 		if (p->secondary >= 0 && (p->is_alt || !(opt->flag&MEM_F_ALL))) continue;
 		if (p->secondary >= 0 && p->secondary < INT_MAX && p->score < a->a[p->secondary].score * opt->drop_ratio) continue;
 		q = kv_pushp(mem_aln_t, aa);
