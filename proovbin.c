@@ -86,109 +86,64 @@ int assess_aln_by_score (struct bin_t *bin, int length, int score) {
   a = malloc(sizeof(struct aln_t));
   a->length = length;
   a->score = score;
-  printf("\nassessing:\n %4d %4d\n", a->score, a->length);
 
-  // empty bin
   if (TAILQ_EMPTY(&bin->que))
-    {
-      printf("empty\n");
+    { // empty bin
       bin->length = length;  // first item => total length == item length
       TAILQ_INSERT_HEAD(&bin->que, a, alns);
     }
 
-  // partially filled bin
   else if (bin->length < bin_length_max)
-    {
-      printf("part: ");
-      // new min score aln
+    { // partially filled bin
       if (a->score <= TAILQ_FIRST(&bin->que)->score)
-        {
-          printf("min\n");
-
+        { // new min score aln
           TAILQ_INSERT_HEAD(&bin->que, a, alns);
-          // update length
           bin->length = bin->length + a->length;
-
         }
-      // new max score
       else if (a->score >= TAILQ_LAST(&bin->que, que_t)->score)
-        {
-          printf("max\n");
-
+        { // new max score
           TAILQ_INSERT_TAIL(&bin->que, a, alns);
-          // update length
           bin->length += a->length;
         }
-      // non-min score aln
       else
-        {
-          printf("within\n");
-
+        { // non-min score aln
           TAILQ_FOREACH(ai, &bin->que, alns){
             if (a->score < ai->score)
               break;
           }
-
           TAILQ_INSERT_BEFORE(ai, a, alns);
-          // update length
           bin->length += a->length;
-
         }
     }
 
-  // full bin
   else
-    {
-      printf("full: ");
-      // new min score aln
+    { // full bin
       if (a->score <= TAILQ_FIRST(&bin->que)->score)
-        {
-          printf("min\n");
+        { // new min score aln
           return 0;
         }
-
-      // new max score
       if (a->score >= TAILQ_LAST(&bin->que, que_t)->score)
-        {
-          printf("max");
-
+        { // new max score
           TAILQ_INSERT_TAIL(&bin->que, a, alns);
-          // update length
           bin->length += a->length;
         }
-      // non-min score aln
       else
-        {
-          printf("within");
-
+        { // non-min score aln - find pos
           TAILQ_FOREACH(ai, &bin->que, alns){
             if (a->score < ai->score)
               break;
           }
-
           TAILQ_INSERT_BEFORE(ai, a, alns);
-          // update length
           bin->length += a->length;
         }
 
-      // remove overflow
       while (bin->length - TAILQ_FIRST(&bin->que)->length > bin_length_max)
-        {
-          printf(" rm");
+        { // remove overflow
           ar = TAILQ_FIRST(&bin->que);
           TAILQ_REMOVE(&bin->que, ar, alns);
-          // update length
           bin->length -= ar->length;
           free(ar);
         }
-      printf("\n");
     }
-
-  printf("      %4d\n----------\n", bin->length);
-  TAILQ_FOREACH(ai, &bin->que, alns)
-    printf(" %4d %4d\n", ai->score, ai->length);
-
-  printf("----------\n");
-
-
+  return 1;
 }
