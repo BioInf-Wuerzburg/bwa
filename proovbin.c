@@ -19,40 +19,57 @@ struct bin_t {
 
 
 int main () {
-  struct bin_t bin;
-  struct bin_t *pbin = &bin;
-  TAILQ_INIT(&bin.que);
+  int i;
+  int bins_s = 5;
+  struct bin_t bins[bins_s];
+
+  for(i=0;i<bins_s;i++){
+    TAILQ_INIT(&bins[i].que);
+  }
+
 
   int data_s = 15;
-  int data[15][2] = {
+  int data[15][3] = {
     {70, 4},
     {100, 7},
     {80, 6},
     {50, 3},
-    {70, 5},
-    {90, 4},
-    {100, 7},
-    {110, 6},
-    {60, 3},
-    {60, 5},
-    {50, 4},
-    {80, 7},
-    {90, 6},
-    {70, 3},
-    {100, 5},
+    {70, 5, 1},
+    {90, 4, 1},
+    {100, 7, 1},
+    {110, 6, 1},
+    {60, 3, 4},
+    {60, 5, 4},
+    {50, 4, 4},
+    {80, 7, 4},
+    {90, 6, 3},
+    {70, 3, 3},
+    {100, 5, 3},
   };
 
-  int i;
   for(i=0;i<data_s;i++){
+    struct bin_t *pbin = &bins[ data[i][2] ];
     assess_aln_by_score( pbin, data[i][0], data[i][1] );
   }
 
-  struct aln_t *a1;
-  // clean up
-  while (a1 = TAILQ_FIRST(&bin.que)) {
-    TAILQ_REMOVE(&bin.que, a1, alns);
-    free(a1);
+  struct aln_t *ai;
+
+  for(i=0;i<bins_s;i++){
+    printf("\nbin:  %4d\n----------\n", bins[i].length);
+    TAILQ_FOREACH(ai, &bins[i].que, alns)
+      printf(" %4d %4d\n", ai->score, ai->length);
+
+    printf("----------\n");
   }
+
+  // clean up
+  for(i=0;i<bins_s;i++){
+    while (ai = TAILQ_FIRST(&bins[i].que)) {
+      TAILQ_REMOVE(&bins[i].que, ai, alns);
+      free(ai);
+    }
+  }
+
 
   printf("BUYA\n");
   return 0;
