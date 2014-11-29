@@ -13,8 +13,8 @@ struct aln_t {
 
 // bin struct
 struct bin_t {
-  int length;  // holds the sum of aln length in bins if aln is bin head
-  TAILQ_HEAD(que_t, aln_t) que; // newline to prevent emacs auto-indent fail :P
+  int length;  // holds the sum of aln length
+  TAILQ_HEAD(que_t, aln_t) que;
 };
 
 
@@ -25,6 +25,7 @@ int main () {
 
   for(i=0;i<bins_s;i++){
     TAILQ_INIT(&bins[i].que);
+    bins[i].length = 0;
   }
 
 
