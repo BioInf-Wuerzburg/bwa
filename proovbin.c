@@ -3,6 +3,7 @@
 #include <queue.h>
 
 int bin_length_max = 300;
+int bin_size = 20;
 
 // list aln struct
 struct aln_t {
@@ -18,8 +19,54 @@ struct bin_t {
 };
 
 
+typedef struct {
+  //	int64_t l_pac;
+  //	int32_t n_seqs;
+  int n_seqs;
+  //	uint32_t seed;
+  //	bntann1_t *anns; // n_seqs elements
+  //	int32_t n_holes;
+  //	bntamb1_t *ambs; // n_holes elements
+  //	FILE *fp_pac;
+  int bin_size;
+  struct bin_t *bin_seqs;
+} bntseq_t;
+
+
+void init_bins (bntseq_t *bns, int bin_size) {
+  int i, j;
+  //struct bin_t *bs[bns->n_seqs];
+
+  bns->bin_seqs = (struct bin_t*)calloc(bns->n_seqs, sizeof(struct bin_t));;
+  bns->bin_size = bin_size;
+
+  /*
+  for(i=0;i<bns->n_seqs;i++){
+
+    // init bins
+    // int bins_n = bns->anns[i].len / bin_size;
+    int bins_n = 100 / bin_size;
+    struct bin_t bins[bins_n];
+
+    for(j=0;j<bins_n;j++){
+      TAILQ_INIT(&bins[j].que);
+      bins[j].length = 0;
+    }
+
+    //bs[i] = &bins;
+  }
+  */
+
+}
+
 int main () {
   int i;
+
+  bntseq_t bnstmp;
+  bntseq_t *bns = &bnstmp;
+
+  init_bins(bns, bin_size);
+
   int bins_s = 5;
   struct bin_t bins[bins_s];
 
