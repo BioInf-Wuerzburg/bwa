@@ -37,14 +37,14 @@ typedef struct {
 } bntseq_t;
 
 
-void init_bins (bntseq_t *bns, int bin_size) {
+void bns_bins_init (bntseq_t *bns, int bin_size) {
   int i, j;
 
   bns->bin_size = bin_size;
 
   // basically what I want:
   // bns->binseqs[n_seqs].bins[n_bins]
-  
+
   bns->binseqs = (binseq_t*) calloc(bns->n_seqs, sizeof(binseq_t));
 
   for(i=0;i<bns->n_seqs;i++){
@@ -69,13 +69,15 @@ void init_bins (bntseq_t *bns, int bin_size) {
 int main () {
   int i;
 
+  // init bwa bns struct
   bntseq_t bnstmp;
   bntseq_t *bns = &bnstmp;
-
   bns->n_seqs = 2;
 
-  init_bins(bns, bin_size);
+  // init bins
+  bns_bins_init(bns, bin_size);
 
+  // some test data
   int data_s = 15;
   // sidx, len, score, bin
   int data[15][4] = {
@@ -96,6 +98,7 @@ int main () {
     {1, 100, 5, 3}
   };
 
+  // run test data
   for(i=0;i<data_s;i++){
     int n = data[i][0];
     int b = data[i][3];
