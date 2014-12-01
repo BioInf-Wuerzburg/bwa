@@ -32,6 +32,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <zlib.h>
+// thackl: proovbin.h
+#include "proovbin.h"
 
 #ifndef BWA_UBYTE
 #define BWA_UBYTE
@@ -53,6 +55,8 @@ typedef struct {
 	char amb;
 } bntamb1_t;
 
+// thackl: forward declaration
+typedef struct binseq_ binseq_t;
 typedef struct {
 	int64_t l_pac;
 	int32_t n_seqs;
@@ -61,6 +65,9 @@ typedef struct {
 	int32_t n_holes;
 	bntamb1_t *ambs; // n_holes elements
 	FILE *fp_pac;
+	// thackl: proovbin members
+	int bin_size;
+	binseq_t *binseqs;
 } bntseq_t;
 
 extern unsigned char nst_nt4_table[256];

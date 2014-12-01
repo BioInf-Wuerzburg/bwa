@@ -1,41 +1,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include "queue.h"
-
-int bin_length = 300;
-int bin_size = 20;
-
-// list aln struct
-struct aln_t {
-  int length, score;
-  TAILQ_ENTRY(aln_t) alns;
-};
-
-
-// bin struct
-typedef struct {
-  int length;  // holds the sum of aln length
-  TAILQ_HEAD(que_t, aln_t) que;
-} bin_t;
-
-typedef struct {
-  int n_bins;
-  bin_t *bins;
-} binseq_t;
-
-typedef struct {
-  //    int64_t l_pac;
-  //    int32_t n_seqs;
-  int n_seqs;
-  //    uint32_t seed
-  //    bntann1_t *anns; // n_seqs elements
-  //    int32_t n_holes;
-  //    bntamb1_t *ambs; // n_holes elements
-  //    FILE *fp_pac;
-  int bin_size;
-  binseq_t *binseqs;
-} bntseq_t;
-
+#include "proovbin.h"
 
 void bns_bins_init (bntseq_t *bns, int bin_size) {
   int i, j;
@@ -98,56 +64,14 @@ void bns_bins_print (bntseq_t *bns) {
 }
 
 
-int main () {
-  int i;
 
-  // init bwa bns struct
-  bntseq_t bnstmp;
-  bntseq_t *bns = &bnstmp;
-  bns->n_seqs = 2;
-
-  // init bins
-  bns_bins_init(bns, bin_size);
-
-  // some test data
-  int data_s = 15;
-  // sidx, len, score, bin
-  int data[15][4] = {
-    {0, 70, 4},
-    {0, 100, 7},
-    {0, 80, 6},
-    {0, 50, 3},
-    {0, 70, 5, 1},
-    {0, 90, 4, 1},
-    {0, 100, 7, 1},
-    {0, 110, 6, 1},
-    {0, 60, 3, 4},
-    {1, 60, 5, 4},
-    {1, 50, 4, 4},
-    {1, 80, 7, 4},
-    {1, 90, 6, 3},
-    {1, 70, 3, 3},
-    {1, 100, 5, 3}
-  };
-
-  // run test data
-  for(i=0;i<data_s;i++){
-    int n = data[i][0];
-    int b = data[i][3];
-    bin_t *pbin = &bns->binseqs[n].bins[b];
-    assess_aln_by_score( pbin, data[i][1], data[i][2]);
-  }
-
-  // print bin content
-  bns_bins_print(bns);
-
-  // cleanup bin memory
-  bns_bins_destroy(bns);
-
-  return 0;
+int bins_pos2idx (int bin_size, int length, int pos) {
+  int b = ( pos + length/2 ) / bin_size;
+  return b;
 }
 
-int assess_aln_by_score (bin_t *bin, int length, int score) {
+
+int bins_assess_aln_by_score (bin_t *bin, int bin_length, int length, int score) {
   //printf("%5d %5d\n", length, score);
 
   struct aln_t *a;
