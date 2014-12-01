@@ -37,7 +37,7 @@ void bns_bins_destroy (bntseq_t *bns) {
   // clean up
   for(n=0; n<bns->n_seqs; n++){ // loop seqs
     for(b=0; b<bns->binseqs[n].n_bins; b++){ // loop bins
-      while (ai = TAILQ_FIRST(&bns->binseqs[n].bins[b].que)) {
+      while ( (ai = TAILQ_FIRST(&bns->binseqs[n].bins[b].que)) != NULL) {
         TAILQ_REMOVE(&bns->binseqs[n].bins[b].que, ai, alns);
         free(ai);
       }
@@ -49,7 +49,7 @@ void bns_bins_destroy (bntseq_t *bns) {
 
 void bns_bins_print (bntseq_t *bns) {
   struct aln_t *ai;
-  int n,b,len,sco;
+  int n,b,len;
 
   printf("#seq bin    len  alignments\n");
   for(n=0; n<bns->n_seqs; n++){ // loop seqs
@@ -77,7 +77,6 @@ int bins_assess_aln_by_score (bin_t *bin, int bin_length, int length, int score)
   struct aln_t *a;
   struct aln_t *ai;
   struct aln_t *ar;
-  struct aln_t *am;
 
   a = malloc(sizeof(struct aln_t));
   a->length = length;
