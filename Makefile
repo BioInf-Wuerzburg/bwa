@@ -8,7 +8,7 @@ LOBJS=		utils.o kthread.o kstring.o ksw.o bwt.o bntseq.o bwa.o bwamem.o bwamem_p
 AOBJS=		QSufSort.o bwt_gen.o bwashm.o bwase.o bwaseqio.o bwtgap.o bwtaln.o bamlite.o \
 			is.o bwtindex.o bwape.o kopen.o pemerge.o \
 			bwtsw2_core.o bwtsw2_main.o bwtsw2_aux.o bwt_lite.o \
-			bwtsw2_chain.o fastmap.o bwtsw2_pair.o
+			bwtsw2_chain.o fastmap.o bwtsw2_pair.o proovbin.o
 PROG=		bwa
 INCLUDES=	
 LIBS=		-lm -lz -lpthread
@@ -81,3 +81,4 @@ main.o: kstring.h malloc_wrap.h utils.h
 malloc_wrap.o: malloc_wrap.h
 pemerge.o: ksw.h kseq.h malloc_wrap.h kstring.h bwa.h bntseq.h bwt.h utils.h
 utils.o: utils.h ksort.h malloc_wrap.h kseq.h
+proovread.o: proovread.h queue.h bntseq.h
