@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "queue.h"
 
-int bin_length_max = 300;
+int bin_length = 300;
 int bin_size = 20;
 
 // list aln struct
@@ -13,14 +13,14 @@ struct aln_t {
 
 
 // bin struct
-struct bin_t {
+typedef struct {
   int length;  // holds the sum of aln length
   TAILQ_HEAD(que_t, aln_t) que;
-};
+} bin_t;
 
 typedef struct {
   int n_bins;
-  struct bin_t *bins;
+  bin_t *bins;
 } binseq_t;
 
 typedef struct {
@@ -51,8 +51,8 @@ void bns_bins_init (bntseq_t *bns, int bin_size) {
     // int n_bins = bns->anns[i].len / bin_size + 1;
     int n_bins = 5;
 
-    struct bin_t *bins;
-    bins = (struct bin_t*) calloc(n_bins, sizeof(struct bin_t));
+    bin_t *bins;
+    bins = (bin_t*) calloc(n_bins, sizeof(bin_t));
 
     for(j=0;j<n_bins;j++){
       TAILQ_INIT(&bins[j].que);
@@ -134,8 +134,8 @@ int main () {
   for(i=0;i<data_s;i++){
     int n = data[i][0];
     int b = data[i][3];
-    struct bin_t *pbin = &bns->binseqs[n].bins[b];
-    assess_aln_by_score( pbin, data[i][1], data[i][2] );
+    bin_t *pbin = &bns->binseqs[n].bins[b];
+    assess_aln_by_score( pbin, data[i][1], data[i][2]);
   }
 
   // print bin content
@@ -144,11 +144,10 @@ int main () {
   // cleanup bin memory
   bns_bins_destroy(bns);
 
-  printf("BUYA\n");
   return 0;
 }
 
-int assess_aln_by_score (struct bin_t *bin, int length, int score) {
+int assess_aln_by_score (bin_t *bin, int length, int score) {
   //printf("%5d %5d\n", length, score);
 
   struct aln_t *a;
@@ -166,7 +165,7 @@ int assess_aln_by_score (struct bin_t *bin, int length, int score) {
       TAILQ_INSERT_HEAD(&bin->que, a, alns);
     }
 
-  else if (bin->length < bin_length_max)
+  else if (bin->length < bin_length)
     { // partially filled bin
       if (a->score <= TAILQ_FIRST(&bin->que)->score)
         { // new min score aln
@@ -210,7 +209,7 @@ int assess_aln_by_score (struct bin_t *bin, int length, int score) {
           bin->length += a->length;
         }
 
-      while (bin->length - TAILQ_FIRST(&bin->que)->length > bin_length_max)
+      while (bin->length - TAILQ_FIRST(&bin->que)->length > bin_length)
         { // remove overflow
           ar = TAILQ_FIRST(&bin->que);
           TAILQ_REMOVE(&bin->que, ar, alns);
