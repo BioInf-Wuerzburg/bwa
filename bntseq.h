@@ -32,8 +32,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <zlib.h>
-// thackl: proovbin.h
-#include "proovbin.h"
 
 #ifndef BWA_UBYTE
 #define BWA_UBYTE
