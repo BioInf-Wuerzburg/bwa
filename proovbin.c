@@ -1,6 +1,6 @@
 #include <malloc.h>
 #include <stdio.h>
-#include <queue.h>
+#include "queue.h"
 
 int bin_length_max = 300;
 int bin_size = 20;
