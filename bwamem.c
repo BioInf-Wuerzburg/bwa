@@ -8,6 +8,7 @@
 #include <pthread.h>
 #endif
 
+#include "proovbin.h"
 #include "kstring.h"
 #include "bwamem.h"
 #include "bntseq.h"
@@ -19,6 +20,8 @@
 #ifdef USE_MALLOC_WRAPPERS
 #  include "malloc_wrap.h"
 #endif
+
+
 
 /* Theory on probability and scoring *ungapped* alignment
  *
@@ -54,8 +57,13 @@ mem_opt_t *mem_opt_init()
 	o->o_del = o->o_ins = 6;
 	o->e_del = o->e_ins = 1;
 	o->w = 100;
+
+        // thackl: per base score
 	//o->T = 30;
-        o->T = 0.5; // per base score
+        o->T = 0.5;
+        // thackl: binning
+        o->bin_length = 100;  // for 20bp bins and 100bp reads => 5X
+
 	o->zdrop = 100;
 	o->pen_unpaired = 17;
 	o->pen_clip5 = o->pen_clip3 = 5;
@@ -996,7 +1004,15 @@ void mem_reg2sam(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, 
 	for (k = l = 0; k < a->n; ++k) {
 		mem_alnreg_t *p = &a->a[k];
 		mem_aln_t *q;
+
+                // thackl: rel score
 		if (p->score < opt->T * s->l_seq) continue;
+
+                // thackl: proovread binning
+                int bidx = bins_pos2idx(bns->bin_size, s->l_seq, p->rb < p->re ? p->rb : p->re);
+                bin_t *pbin = &bns->binseqs[p->rid].bins[bidx];
+                if ( bins_assess_aln_by_score( pbin, opt->bin_length, s->l_seq, p->score) != 1 ) continue; // proovread binning
+
 		if (p->secondary >= 0 && (p->is_alt || !(opt->flag&MEM_F_ALL))) continue;
 		if (p->secondary >= 0 && p->secondary < INT_MAX && p->score < a->a[p->secondary].score * opt->drop_ratio) continue;
 		q = kv_pushp(mem_aln_t, aa);

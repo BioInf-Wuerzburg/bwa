@@ -53,6 +53,9 @@ typedef struct {
 	int max_matesw;         // perform maximally max_matesw rounds of mate-SW for each end
 	int max_XA_hits, max_XA_hits_alt; // if there are max_hits or fewer, output them all
 	int8_t mat[25];         // scoring matrix; mat[0] == 0 if unset
+	// thackl
+	int bin_size;
+	int bin_length;
 } mem_opt_t;
 
 typedef struct {

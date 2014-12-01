@@ -5,8 +5,7 @@
 #include "queue.h"
 #include "bntseq.h"
 
-extern int bin_length;
-extern int bin_size;
+extern int global_bin_size; // use ugly global because init has no access to opts
 
 // list aln struct
 struct aln_t {
@@ -25,7 +24,7 @@ typedef struct binseq_ {
   bin_t *bins;
 } binseq_t;
 
-void bns_bins_init (bntseq_t *bns, int bin_size);
+void bns_bins_init (bntseq_t *bns);
 void bns_bins_destroy (bntseq_t *bns);
 void bns_bins_print (bntseq_t *bns);
 

@@ -33,6 +33,7 @@
 #include <errno.h>
 #include "bntseq.h"
 #include "utils.h"
+#include "proovbin.h"
 
 #include "kseq.h"
 KSEQ_DECLARE(gzFile)
@@ -202,6 +203,10 @@ bntseq_t *bns_restore(const char *prefix)
 		kh_destroy(str, h);
 		fclose(fp);
 	}
+
+        //thackl
+        bns_bins_init(bns);
+
 	return bns;
 }
 
@@ -210,6 +215,12 @@ void bns_destroy(bntseq_t *bns)
 	if (bns == 0) return;
 	else {
 		int i;
+                // thackl
+                if(bns->binseqs){
+                  // bns_bins_print(bns); // debug bin content
+                  bns_bins_destroy(bns);
+                }
+
 		if (bns->fp_pac) err_fclose(bns->fp_pac);
 		free(bns->ambs);
 		for (i = 0; i < bns->n_seqs; ++i) {

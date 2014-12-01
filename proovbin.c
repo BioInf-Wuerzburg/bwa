@@ -3,10 +3,10 @@
 #include "queue.h"
 #include "proovbin.h"
 
-void bns_bins_init (bntseq_t *bns, int bin_size) {
+void bns_bins_init (bntseq_t *bns) {
   int i, j;
 
-  bns->bin_size = bin_size;
+  bns->bin_size = global_bin_size;
 
   // basically what I want:
   // bns->binseqs[n_seqs].bins[n_bins]
@@ -14,8 +14,7 @@ void bns_bins_init (bntseq_t *bns, int bin_size) {
   bns->binseqs = (binseq_t*) calloc(bns->n_seqs, sizeof(binseq_t));
 
   for(i=0;i<bns->n_seqs;i++){
-    // int n_bins = bns->anns[i].len / bin_size + 1;
-    int n_bins = 5;
+    int n_bins = bns->anns[i].len / bns->bin_size + 1;
 
     bin_t *bins;
     bins = (bin_t*) calloc(n_bins, sizeof(bin_t));
