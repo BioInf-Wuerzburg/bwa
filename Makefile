@@ -9,7 +9,7 @@ AOBJS=		QSufSort.o bwt_gen.o bwashm.o bwase.o bwaseqio.o bwtgap.o bwtaln.o bamli
 			is.o bwtindex.o bwape.o kopen.o pemerge.o \
 			bwtsw2_core.o bwtsw2_main.o bwtsw2_aux.o bwt_lite.o \
 			bwtsw2_chain.o fastmap.o bwtsw2_pair.o proovbin.o
-PROG=		bwa
+PROG=		bwa-proovread
 INCLUDES=	
 LIBS=		-lm -lz -lpthread
 SUBDIRS=	.
@@ -25,7 +25,7 @@ endif
 
 all:$(PROG)
 
-bwa:libbwa.a $(AOBJS) main.o
+bwa-proovread:libbwa.a $(AOBJS) main.o
 		$(CC) $(CFLAGS) $(DFLAGS) $(AOBJS) main.o -o $@ -L. -lbwa $(LIBS)
 
 bwamem-lite:libbwa.a example.o
