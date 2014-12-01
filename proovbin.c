@@ -48,8 +48,7 @@ void bns_bins_init (bntseq_t *bns, int bin_size) {
   bns->binseqs = (binseq_t*) calloc(bns->n_seqs, sizeof(binseq_t));
 
   for(i=0;i<bns->n_seqs;i++){
-    // TODO: compute n_bins
-    // int n_bins = compute_seq_n_bins(bns->anns[i].len, bin_size);
+    // int n_bins = bns->anns[i].len / bin_size + 1;
     int n_bins = 5;
 
     struct bin_t *bins;
