@@ -18,44 +18,51 @@ struct bin_t {
   TAILQ_HEAD(que_t, aln_t) que;
 };
 
+typedef struct {
+  int n_bins;
+  struct bin_t *bins;
+} binseq_t;
 
 typedef struct {
-  //	int64_t l_pac;
-  //	int32_t n_seqs;
+  //    int64_t l_pac;
+  //    int32_t n_seqs;
   int n_seqs;
-  //	uint32_t seed;
-  //	bntann1_t *anns; // n_seqs elements
-  //	int32_t n_holes;
-  //	bntamb1_t *ambs; // n_holes elements
-  //	FILE *fp_pac;
+  //    uint32_t seed
+  //    bntann1_t *anns; // n_seqs elements
+  //    int32_t n_holes;
+  //    bntamb1_t *ambs; // n_holes elements
+  //    FILE *fp_pac;
   int bin_size;
-  struct bin_t *bin_seqs;
+  binseq_t *binseqs;
 } bntseq_t;
 
 
 void init_bins (bntseq_t *bns, int bin_size) {
   int i, j;
-  //struct bin_t *bs[bns->n_seqs];
 
-  bns->bin_seqs = (struct bin_t*)calloc(bns->n_seqs, sizeof(struct bin_t));;
   bns->bin_size = bin_size;
 
-  /*
+  // basically what I want:
+  // bns->binseqs[n_seqs].bins[n_bins]
+  
+  bns->binseqs = (binseq_t*) calloc(bns->n_seqs, sizeof(binseq_t));
+
   for(i=0;i<bns->n_seqs;i++){
+    // TODO: compute n_bins
+    // int n_bins = compute_seq_n_bins(bns->anns[i].len, bin_size);
+    int n_bins = 5;
 
-    // init bins
-    // int bins_n = bns->anns[i].len / bin_size;
-    int bins_n = 100 / bin_size;
-    struct bin_t bins[bins_n];
+    struct bin_t *bins;
+    bins = (struct bin_t*) calloc(n_bins, sizeof(struct bin_t));
 
-    for(j=0;j<bins_n;j++){
+    for(j=0;j<n_bins;j++){
       TAILQ_INIT(&bins[j].que);
       bins[j].length = 0;
     }
 
-    //bs[i] = &bins;
+    bns->binseqs[i].n_bins = n_bins;
+    bns->binseqs[i].bins = bins;
   }
-  */
 
 }
 
@@ -65,43 +72,53 @@ int main () {
   bntseq_t bnstmp;
   bntseq_t *bns = &bnstmp;
 
+  bns->n_seqs = 2;
+
   init_bins(bns, bin_size);
 
-  int bins_s = 5;
-  struct bin_t bins[bins_s];
-
-  for(i=0;i<bins_s;i++){
-    TAILQ_INIT(&bins[i].que);
-    bins[i].length = 0;
-  }
-
-
   int data_s = 15;
-  int data[15][3] = {
-    {70, 4},
-    {100, 7},
-    {80, 6},
-    {50, 3},
-    {70, 5, 1},
-    {90, 4, 1},
-    {100, 7, 1},
-    {110, 6, 1},
-    {60, 3, 4},
-    {60, 5, 4},
-    {50, 4, 4},
-    {80, 7, 4},
-    {90, 6, 3},
-    {70, 3, 3},
-    {100, 5, 3},
+  // sidx, len, score, bin
+  int data[15][4] = {
+    {0, 70, 4},
+    {0, 100, 7},
+    {0, 80, 6},
+    {0, 50, 3},
+    {0, 70, 5, 1},
+    {0, 90, 4, 1},
+    {0, 100, 7, 1},
+    {0, 110, 6, 1},
+    {0, 60, 3, 4},
+    {1, 60, 5, 4},
+    {1, 50, 4, 4},
+    {1, 80, 7, 4},
+    {1, 90, 6, 3},
+    {1, 70, 3, 3},
+    {1, 100, 5, 3}
   };
 
   for(i=0;i<data_s;i++){
-    struct bin_t *pbin = &bins[ data[i][2] ];
-    assess_aln_by_score( pbin, data[i][0], data[i][1] );
+    int n = data[i][0];
+    int b = data[i][3];
+    struct bin_t *pbin = &bns->binseqs[n].bins[b];
+    assess_aln_by_score( pbin, data[i][1], data[i][2] );
   }
 
   struct aln_t *ai;
 
+  int n,b,len,sco;
+  
+  printf("#seq bin    len  alignments\n");
+  for(n=0; n<bns->n_seqs; n++){ // loop seqs
+    printf(">%d\n", n);
+    for(b=0; b<bns->binseqs[n].n_bins; b++){ // loop bins
+      len = bns->binseqs[n].bins[b].length;
+      printf("     #%-4d %4d ------------\n", b, len);
+      TAILQ_FOREACH(ai, &bns->binseqs[n].bins[b].que, alns)
+        printf("                | %4d %4d\n", ai->score, ai->length);
+    }
+  }
+
+  /*
   for(i=0;i<bins_s;i++){
     printf("\nbin:  %4d\n----------\n", bins[i].length);
     TAILQ_FOREACH(ai, &bins[i].que, alns)
@@ -117,7 +134,7 @@ int main () {
       free(ai);
     }
   }
-
+  */
 
   printf("BUYA\n");
   return 0;
