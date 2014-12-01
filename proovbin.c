@@ -66,6 +66,39 @@ void bns_bins_init (bntseq_t *bns, int bin_size) {
 
 }
 
+void bns_bins_destroy (bntseq_t *bns) {
+  struct aln_t *ai;
+  int n,b;
+  // clean up
+  for(n=0; n<bns->n_seqs; n++){ // loop seqs
+    for(b=0; b<bns->binseqs[n].n_bins; b++){ // loop bins
+      while (ai = TAILQ_FIRST(&bns->binseqs[n].bins[b].que)) {
+        TAILQ_REMOVE(&bns->binseqs[n].bins[b].que, ai, alns);
+        free(ai);
+      }
+    }
+    free(bns->binseqs[n].bins);
+  }
+  free(bns->binseqs);
+}
+
+void bns_bins_print (bntseq_t *bns) {
+  struct aln_t *ai;
+  int n,b,len,sco;
+
+  printf("#seq bin    len  alignments\n");
+  for(n=0; n<bns->n_seqs; n++){ // loop seqs
+    printf(">%d\n", n);
+    for(b=0; b<bns->binseqs[n].n_bins; b++){ // loop bins
+      len = bns->binseqs[n].bins[b].length;
+      printf("     #%-4d %4d ------------\n", b, len);
+      TAILQ_FOREACH(ai, &bns->binseqs[n].bins[b].que, alns)
+        printf("                | %4d %4d\n", ai->score, ai->length);
+    }
+  }
+}
+
+
 int main () {
   int i;
 
@@ -106,38 +139,11 @@ int main () {
     assess_aln_by_score( pbin, data[i][1], data[i][2] );
   }
 
-  struct aln_t *ai;
+  // print bin content
+  bns_bins_print(bns);
 
-  int n,b,len,sco;
-  
-  printf("#seq bin    len  alignments\n");
-  for(n=0; n<bns->n_seqs; n++){ // loop seqs
-    printf(">%d\n", n);
-    for(b=0; b<bns->binseqs[n].n_bins; b++){ // loop bins
-      len = bns->binseqs[n].bins[b].length;
-      printf("     #%-4d %4d ------------\n", b, len);
-      TAILQ_FOREACH(ai, &bns->binseqs[n].bins[b].que, alns)
-        printf("                | %4d %4d\n", ai->score, ai->length);
-    }
-  }
-
-  /*
-  for(i=0;i<bins_s;i++){
-    printf("\nbin:  %4d\n----------\n", bins[i].length);
-    TAILQ_FOREACH(ai, &bins[i].que, alns)
-      printf(" %4d %4d\n", ai->score, ai->length);
-
-    printf("----------\n");
-  }
-
-  // clean up
-  for(i=0;i<bins_s;i++){
-    while (ai = TAILQ_FIRST(&bins[i].que)) {
-      TAILQ_REMOVE(&bins[i].que, ai, alns);
-      free(ai);
-    }
-  }
-  */
+  // cleanup bin memory
+  bns_bins_destroy(bns);
 
   printf("BUYA\n");
   return 0;
