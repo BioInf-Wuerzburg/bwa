@@ -114,6 +114,7 @@ int bins_assess_aln_by_score (bin_t *bin, int bin_length, int length, int score)
     { // full bin
       if (a->score <= TAILQ_FIRST(&bin->que)->score)
         { // new min score aln
+          free(a);
           return 0;
         }
       if (a->score >= TAILQ_LAST(&bin->que, que_t)->score)
