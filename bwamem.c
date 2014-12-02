@@ -1009,7 +1009,11 @@ void mem_reg2sam(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, 
 		if (p->score < opt->T * s->l_seq) continue;
 
                 // thackl: proovread binning
-                int bidx = bins_pos2idx(bns->bin_size, s->l_seq, p->rb < p->re ? p->rb : p->re);
+                int is_rev;
+                int rpos = bns_depos(bns, p->rb < bns->l_pac? p->rb : p->re - 1, &is_rev);
+                int apos = rpos - bns->anns[p->rid].offset;
+                int bidx = bins_pos2idx(bns->bin_size, s->l_seq, apos);
+                //printf("bs:%d ri:%d bi:%d ln:%d rp:%d ap:%d rb:%d re:%d of:%d\n", bns->bin_size, p->rid, bidx, s->l_seq, rpos, apos, p->rb, p->re, bns->anns[p->rid].offset );
                 bin_t *pbin = &bns->binseqs[p->rid].bins[bidx];
                 if ( bins_assess_aln_by_score( pbin, opt->bin_length, s->l_seq, p->score) != 1 ) continue; // proovread binning
 
