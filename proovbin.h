@@ -2,6 +2,7 @@
 #define PROOVBIN_H 1
 
 #include <malloc.h>
+#include <pthread.h>
 #include "queue.h"
 #include "bntseq.h"
 
@@ -16,6 +17,7 @@ struct aln_t {
 // bin struct
 typedef struct {
   int length;  // holds the sum of aln length
+  pthread_mutex_t mutex; // only let one thread at a time fiddle around with the queue
   TAILQ_HEAD(que_t, aln_t) que;
 } bin_t;
 

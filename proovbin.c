@@ -21,6 +21,7 @@ void bns_bins_init (bntseq_t *bns) {
 
     for(j=0;j<n_bins;j++){
       TAILQ_INIT(&bins[j].que);
+      pthread_mutex_init(&(bins[j].mutex), NULL);
       bins[j].length = 0;
     }
 
@@ -73,6 +74,8 @@ int bins_pos2idx (int bin_size, int length, int pos) {
 int bins_assess_aln_by_score (bin_t *bin, int bin_length, int length, int score) {
   //printf("%5d %5d\n", length, score);
 
+  pthread_mutex_lock(&(bin->mutex));
+  
   struct aln_t *a;
   struct aln_t *ai;
   struct aln_t *ar;
@@ -115,6 +118,7 @@ int bins_assess_aln_by_score (bin_t *bin, int bin_length, int length, int score)
       if (a->score <= TAILQ_FIRST(&bin->que)->score)
         { // new min score aln
           free(a);
+          pthread_mutex_unlock(&(bin->mutex));
           return 0;
         }
       if (a->score >= TAILQ_LAST(&bin->que, que_t)->score)
@@ -140,5 +144,6 @@ int bins_assess_aln_by_score (bin_t *bin, int bin_length, int length, int score)
           free(ar);
         }
     }
+  pthread_mutex_unlock(&(bin->mutex));
   return 1;
 }
