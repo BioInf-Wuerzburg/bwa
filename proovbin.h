@@ -21,10 +21,10 @@ typedef struct {
   TAILQ_HEAD(que_t, aln_t) que;
 } bin_t;
 
-typedef struct binseq_ {
+struct binseq_ {
   int n_bins;
   bin_t *bins;
-} binseq_t;
+};
 
 void bns_bins_init (bntseq_t *bns);
 void bns_bins_destroy (bntseq_t *bns);
