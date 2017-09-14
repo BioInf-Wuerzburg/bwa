@@ -1,4 +1,4 @@
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "queue.h"
 #include "proovbin.h"

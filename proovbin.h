@@ -1,7 +1,7 @@
 #ifndef PROOVBIN_H
 #define PROOVBIN_H 1
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include "queue.h"
 #include "bntseq.h"
